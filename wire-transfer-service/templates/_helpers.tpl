@@ -1,7 +1,7 @@
 {{- define "wire-transfer-service.labels" -}}
-app: {{ .Release.Name }}
+app: {{ .Chart.Name }}
 app.kubernetes.io/name: wire-transfer-service
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ .Chart.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/component: payment-processing
 app.kubernetes.io/part-of: acme-payment-services
@@ -11,7 +11,7 @@ lightwell.redhat.com/risk-class: {{ .Values.labels | dig "lightwell.redhat.com/r
 {{- end -}}
 
 {{- define "wire-transfer-service.selectorLabels" -}}
-app: {{ .Release.Name }}
+app: {{ .Chart.Name }}
 app.kubernetes.io/name: wire-transfer-service
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ .Chart.Name }}
 {{- end -}}

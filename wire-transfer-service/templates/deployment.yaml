@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Chart.Name }}
   labels:
     {{- include "wire-transfer-service.labels" . | nindent 4 }}
   annotations:
@@ -46,4 +46,4 @@ spec:
       volumes:
       - name: html
         configMap:
-          name: {{ .Release.Name }}-html
+          name: {{ .Chart.Name }}-html

@@ -1,7 +1,7 @@
 {{- define "benefits-mgmt-app.labels" -}}
-app: {{ .Release.Name }}
-app.kubernetes.io/name: benefits-mgmt-app
-app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ .Chart.Name }}
+app.kubernetes.io/name: {{ .Chart.Name }}
+app.kubernetes.io/instance: {{ .Chart.Name }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 app.kubernetes.io/component: internal-tools
 app.kubernetes.io/part-of: acme-internal-tools
@@ -11,7 +11,7 @@ lightwell.redhat.com/risk-class: {{ .Values.labels | dig "lightwell.redhat.com/r
 {{- end -}}
 
 {{- define "benefits-mgmt-app.selectorLabels" -}}
-app: {{ .Release.Name }}
-app.kubernetes.io/name: benefits-mgmt-app
-app.kubernetes.io/instance: {{ .Release.Name }}
+app: {{ .Chart.Name }}
+app.kubernetes.io/name: {{ .Chart.Name }}
+app.kubernetes.io/instance: {{ .Chart.Name }}
 {{- end -}}

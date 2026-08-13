@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ .Release.Name }}-html
+  name: {{ .Chart.Name }}-html
   labels:
     {{- include "wire-transfer-service.labels" . | nindent 4 }}
 data:

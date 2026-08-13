@@ -2,7 +2,7 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Chart.Name }}
   labels:
     {{- include "wire-transfer-service.labels" . | nindent 4 }}
 spec:
@@ -13,7 +13,7 @@ spec:
     insecureEdgeTerminationPolicy: Redirect
   to:
     kind: Service
-    name: {{ .Release.Name }}
+    name: {{ .Chart.Name }}
     weight: 100
   wildcardPolicy: None
 {{- end }}

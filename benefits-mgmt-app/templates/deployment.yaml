@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Release.Name }}
+  name: {{ .Chart.Name }}
   labels:
     {{- include "benefits-mgmt-app.labels" . | nindent 4 }}
   annotations:
@@ -45,4 +45,4 @@ spec:
       volumes:
       - name: html
         configMap:
-          name: {{ .Release.Name }}-html
+          name: {{ .Chart.Name }}-html
