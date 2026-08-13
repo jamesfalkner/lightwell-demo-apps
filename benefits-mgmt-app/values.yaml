@@ -1,0 +1,26 @@
+replicaCount: 1
+
+image:
+  repository: registry.access.redhat.com/ubi9/httpd-24
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 8080
+
+route:
+  enabled: true
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 250m
+    memory: 128Mi
+
+labels:
+  app.kubernetes.io/part-of: acme-internal-tools
+  lightwell.redhat.com/scanned: "true"
+  lightwell.redhat.com/risk-class: "LOW"

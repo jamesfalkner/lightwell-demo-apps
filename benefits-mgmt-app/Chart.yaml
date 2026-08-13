@@ -1,0 +1,15 @@
+apiVersion: v2
+name: benefits-mgmt-app
+description: ACME Financial Services — Internal employee benefits management tool for plan administration, enrollment periods, and claims processing
+version: 3.4.1
+appVersion: "3.4.1"
+type: application
+keywords:
+  - benefits
+  - internal-tools
+  - hr-admin
+  - enrollment
+  - claims
+maintainers:
+  - name: ACME Internal Tools Team
+    email: internal-tools@acmefinancial.com

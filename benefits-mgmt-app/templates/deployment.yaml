@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    {{- include "benefits-mgmt-app.labels" . | nindent 4 }}
+  annotations:
+    app.openshift.io/vcs-uri: "https://gitlab.apps.ocp.8xhz7.sandbox2959.opentlc.com/customer-digital/benefits-mgmt-app"
+    lightwell.redhat.com/last-scan: "2026-07-31T10:00:00Z"
+    lightwell.redhat.com/remediations-applied: "8"
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "benefits-mgmt-app.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "benefits-mgmt-app.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+      - name: benefits-mgmt-app
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+        - name: html
+          mountPath: /var/www/html
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 30
+      volumes:
+      - name: html
+        configMap:
+          name: {{ .Release.Name }}-html

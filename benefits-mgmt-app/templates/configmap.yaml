@@ -1,0 +1,251 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-html
+  labels:
+    {{- include "benefits-mgmt-app.labels" . | nindent 4 }}
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Benefits Management — ACME Internal Tools</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: #f4f5f7; color: #1a1a2e; min-height: 100vh; display: flex; }
+        .sidebar { width: 240px; background: #1a1a2e; color: #c8c8d4; min-height: 100vh; padding: 0; flex-shrink: 0; }
+        .sidebar .logo { padding: 20px 20px; border-bottom: 1px solid #2a2a4a; font-size: 14px; font-weight: 700; color: #fff; }
+        .sidebar .logo span { color: #7c83ff; }
+        .sidebar .section-label { padding: 16px 20px 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: #6c6c8a; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 20px; color: #9898b0; text-decoration: none; font-size: 13px; border-left: 3px solid transparent; }
+        .sidebar a:hover { background: #22223a; color: #e0e0f0; }
+        .sidebar a.active { background: #22223a; color: #7c83ff; border-left-color: #7c83ff; }
+        .sidebar a .icon { width: 18px; text-align: center; }
+        .main { flex: 1; display: flex; flex-direction: column; }
+        .topbar { background: #fff; border-bottom: 1px solid #e0e2e8; padding: 14px 28px; display: flex; justify-content: space-between; align-items: center; }
+        .topbar h1 { font-size: 16px; font-weight: 600; color: #1a1a2e; }
+        .topbar .user { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #555; }
+        .topbar .avatar { width: 30px; height: 30px; background: #7c83ff; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; font-weight: 700; }
+        .content { padding: 24px 28px; flex: 1; }
+        .alert { background: #eef2ff; border: 1px solid #c7d2fe; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; font-size: 13px; color: #3730a3; }
+        .alert .icon { font-size: 18px; }
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+        .card { background: #fff; border: 1px solid #e0e2e8; border-radius: 10px; padding: 20px; }
+        .card .top { display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px; }
+        .card .label { font-size: 12px; color: #888; font-weight: 500; }
+        .card .value { font-size: 26px; font-weight: 700; color: #1a1a2e; margin-top: 2px; }
+        .card .sub { font-size: 12px; color: #22c55e; margin-top: 4px; }
+        .card .sub.neutral { color: #888; }
+        .card .badge { font-size: 11px; padding: 3px 10px; border-radius: 12px; font-weight: 600; }
+        .badge-green { background: #dcfce7; color: #166534; }
+        .badge-yellow { background: #fef9c3; color: #854d0e; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .panel { background: #fff; border: 1px solid #e0e2e8; border-radius: 10px; margin-bottom: 16px; }
+        .panel-header { padding: 16px 20px; border-bottom: 1px solid #f0f0f4; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h2 { font-size: 14px; font-weight: 600; color: #1a1a2e; }
+        .panel-header .btn { font-size: 12px; padding: 6px 14px; border-radius: 6px; border: 1px solid #d0d5dd; background: #fff; color: #344054; cursor: pointer; }
+        .panel-header .btn-primary { background: #7c83ff; border-color: #7c83ff; color: #fff; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 20px; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.5px; background: #fafafa; border-bottom: 1px solid #f0f0f4; }
+        td { padding: 12px 20px; font-size: 13px; border-bottom: 1px solid #f5f5f8; color: #333; }
+        .status-dot { display: inline-flex; align-items: center; gap: 6px; }
+        .status-dot::before { content: ''; width: 7px; height: 7px; border-radius: 50%; }
+        .status-dot.active::before { background: #22c55e; }
+        .status-dot.pending::before { background: #f59e0b; }
+        .status-dot.expired::before { background: #ef4444; }
+        .status-dot.review::before { background: #3b82f6; }
+        .plan-tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .plan-gold { background: #fef3c7; color: #92400e; }
+        .plan-silver { background: #f1f5f9; color: #475569; }
+        .plan-platinum { background: #ede9fe; color: #5b21b6; }
+        .footer { text-align: center; padding: 16px; font-size: 11px; color: #999; border-top: 1px solid #e0e2e8; }
+      </style>
+    </head>
+    <body>
+      <div class="sidebar">
+        <div class="logo"><span>ACME</span> Internal Tools</div>
+        <div class="section-label">Benefits Admin</div>
+        <a href="#" class="active"><span class="icon">&#9632;</span> Dashboard</a>
+        <a href="#"><span class="icon">&#9998;</span> Enrollment</a>
+        <a href="#"><span class="icon">&#9745;</span> Claims</a>
+        <a href="#"><span class="icon">&#9782;</span> Plan Config</a>
+        <a href="#"><span class="icon">&#9783;</span> Providers</a>
+        <div class="section-label">Reports</div>
+        <a href="#"><span class="icon">&#9776;</span> Utilization</a>
+        <a href="#"><span class="icon">&#9783;</span> Cost Analysis</a>
+        <a href="#"><span class="icon">&#8681;</span> Export</a>
+        <div class="section-label">System</div>
+        <a href="#"><span class="icon">&#9881;</span> Settings</a>
+        <a href="#"><span class="icon">&#9432;</span> Audit Log</a>
+      </div>
+      <div class="main">
+        <div class="topbar">
+          <h1>Benefits Management Dashboard</h1>
+          <div class="user">
+            <span>Sarah Chen — HR Admin</span>
+            <div class="avatar">SC</div>
+          </div>
+        </div>
+        <div class="content">
+          <div class="alert">
+            <span class="icon">&#9432;</span>
+            <strong>Open Enrollment Period</strong>&nbsp;ends August 15, 2026. 847 of 2,340 employees have completed enrollment.
+          </div>
+
+          <div class="cards">
+            <div class="card">
+              <div class="top">
+                <div>
+                  <div class="label">Total Enrolled Employees</div>
+                  <div class="value">2,198</div>
+                </div>
+                <span class="badge badge-green">93.9%</span>
+              </div>
+              <div class="sub">142 pending enrollment</div>
+            </div>
+            <div class="card">
+              <div class="top">
+                <div>
+                  <div class="label">Open Claims</div>
+                  <div class="value">384</div>
+                </div>
+                <span class="badge badge-yellow">27 flagged</span>
+              </div>
+              <div class="sub neutral">Avg. processing: 3.2 days</div>
+            </div>
+            <div class="card">
+              <div class="top">
+                <div>
+                  <div class="label">Monthly Benefits Cost</div>
+                  <div class="value">$1.84M</div>
+                </div>
+                <span class="badge badge-blue">On budget</span>
+              </div>
+              <div class="sub neutral">$22.1M annual run rate</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Recent Enrollment Activity</h2>
+              <div style="display:flex;gap:8px;">
+                <button class="btn">Export CSV</button>
+                <button class="btn btn-primary">+ New Enrollment</button>
+              </div>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Department</th>
+                  <th>Plan</th>
+                  <th>Dependents</th>
+                  <th>Effective Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Martinez, Elena</strong><br><span style="color:#888;font-size:11px">EMP-4821</span></td>
+                  <td>Capital Markets</td>
+                  <td><span class="plan-tag plan-platinum">Platinum PPO</span></td>
+                  <td>3 (spouse + 2 children)</td>
+                  <td>Aug 1, 2026</td>
+                  <td><span class="status-dot active">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Thompson, David</strong><br><span style="color:#888;font-size:11px">EMP-3190</span></td>
+                  <td>Core Banking</td>
+                  <td><span class="plan-tag plan-gold">Gold HMO</span></td>
+                  <td>1 (spouse)</td>
+                  <td>Aug 1, 2026</td>
+                  <td><span class="status-dot pending">Pending</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Park, Ji-won</strong><br><span style="color:#888;font-size:11px">EMP-5502</span></td>
+                  <td>Risk &amp; Compliance</td>
+                  <td><span class="plan-tag plan-silver">Silver HDHP</span></td>
+                  <td>0</td>
+                  <td>Aug 1, 2026</td>
+                  <td><span class="status-dot active">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Okafor, Chidi</strong><br><span style="color:#888;font-size:11px">EMP-2847</span></td>
+                  <td>Payment Services</td>
+                  <td><span class="plan-tag plan-platinum">Platinum PPO</span></td>
+                  <td>4 (spouse + 3 children)</td>
+                  <td>Aug 1, 2026</td>
+                  <td><span class="status-dot review">Under Review</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Nakamura, Yuki</strong><br><span style="color:#888;font-size:11px">EMP-6014</span></td>
+                  <td>Customer Digital</td>
+                  <td><span class="plan-tag plan-gold">Gold HMO</span></td>
+                  <td>2 (spouse + 1 child)</td>
+                  <td>Aug 1, 2026</td>
+                  <td><span class="status-dot active">Active</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Williams, Amara</strong><br><span style="color:#888;font-size:11px">EMP-1738</span></td>
+                  <td>Platform Engineering</td>
+                  <td><span class="plan-tag plan-silver">Silver HDHP</span></td>
+                  <td>0</td>
+                  <td>Sep 1, 2026</td>
+                  <td><span class="status-dot pending">Pending</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h2>Plan Summary — 2026</h2>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Plan</th>
+                  <th>Enrolled</th>
+                  <th>Monthly Premium (Employer)</th>
+                  <th>Monthly Premium (Employee)</th>
+                  <th>Deductible</th>
+                  <th>Network</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span class="plan-tag plan-platinum">Platinum PPO</span></td>
+                  <td>624</td>
+                  <td>$1,840</td>
+                  <td>$180</td>
+                  <td>$500</td>
+                  <td>National — 12,400 providers</td>
+                </tr>
+                <tr>
+                  <td><span class="plan-tag plan-gold">Gold HMO</span></td>
+                  <td>982</td>
+                  <td>$1,420</td>
+                  <td>$240</td>
+                  <td>$1,000</td>
+                  <td>Regional — 4,800 providers</td>
+                </tr>
+                <tr>
+                  <td><span class="plan-tag plan-silver">Silver HDHP</span></td>
+                  <td>592</td>
+                  <td>$980</td>
+                  <td>$120</td>
+                  <td>$3,000</td>
+                  <td>National — 12,400 providers</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="footer">
+          ACME Financial Services — Benefits Management v3.4.1 &mdash; Internal Use Only &mdash; Java/Quarkus on Red Hat OpenShift &mdash; Protected by Red Hat Lightwell Network
+        </div>
+      </div>
+    </body>
+    </html>
