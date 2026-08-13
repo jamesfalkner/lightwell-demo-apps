@@ -1,0 +1,219 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-html
+  labels:
+    {{- include "wire-transfer-service.labels" . | nindent 4 }}
+data:
+  index.html: |
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>ACME Wire Transfer Service</title>
+      <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; background: #0f1923; color: #e8eaed; min-height: 100vh; }
+        .header { background: linear-gradient(135deg, #1a2332 0%, #0d2137 100%); border-bottom: 2px solid #1e88e5; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        .header h1 { font-size: 18px; font-weight: 600; color: #fff; }
+        .header h1 span { color: #42a5f5; }
+        .header .status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #81c784; }
+        .header .status::before { content: ''; width: 8px; height: 8px; background: #81c784; border-radius: 50%; }
+        .nav { background: #1a2332; padding: 0 32px; display: flex; gap: 0; border-bottom: 1px solid #263545; }
+        .nav a { padding: 12px 20px; color: #90a4ae; text-decoration: none; font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; }
+        .nav a.active { color: #42a5f5; border-bottom-color: #42a5f5; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 24px 32px; }
+        .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+        .stat-card { background: #1a2332; border: 1px solid #263545; border-radius: 8px; padding: 20px; }
+        .stat-card .label { font-size: 12px; color: #78909c; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+        .stat-card .value { font-size: 28px; font-weight: 700; color: #fff; }
+        .stat-card .sub { font-size: 12px; color: #81c784; margin-top: 4px; }
+        .stat-card .sub.warn { color: #ffb74d; }
+        .panel { background: #1a2332; border: 1px solid #263545; border-radius: 8px; margin-bottom: 16px; }
+        .panel-header { padding: 16px 20px; border-bottom: 1px solid #263545; display: flex; justify-content: space-between; align-items: center; }
+        .panel-header h2 { font-size: 14px; font-weight: 600; }
+        .panel-header .badge { background: #1e88e5; color: #fff; padding: 2px 10px; border-radius: 12px; font-size: 11px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px 20px; font-size: 11px; color: #78909c; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #263545; }
+        td { padding: 12px 20px; font-size: 13px; border-bottom: 1px solid #1e2a38; }
+        .chip { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .chip.swift { background: #1e3a5f; color: #64b5f6; }
+        .chip.fedwire { background: #1b5e20; color: #81c784; }
+        .chip.chips { background: #4a148c; color: #ce93d8; }
+        .chip.pending { background: #e65100; color: #ffcc80; }
+        .chip.completed { background: #1b5e20; color: #a5d6a7; }
+        .chip.processing { background: #0d47a1; color: #90caf9; }
+        .amount { font-family: 'SF Mono', 'Fira Code', monospace; font-weight: 600; }
+        .form-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 6px; }
+        .form-group label { font-size: 12px; color: #90a4ae; font-weight: 500; }
+        .form-group input, .form-group select { background: #0f1923; border: 1px solid #37474f; border-radius: 6px; padding: 10px 12px; color: #e8eaed; font-size: 13px; }
+        .btn { padding: 10px 24px; border-radius: 6px; border: none; font-size: 13px; font-weight: 600; cursor: pointer; }
+        .btn-primary { background: #1e88e5; color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid #37474f; color: #90a4ae; }
+        .footer { text-align: center; padding: 24px; color: #546e7a; font-size: 11px; }
+        .footer span { color: #37474f; }
+        .lw-badge { display: inline-flex; align-items: center; gap: 6px; background: #1b3a1b; border: 1px solid #2e7d32; padding: 4px 12px; border-radius: 6px; font-size: 11px; color: #81c784; margin-left: 12px; }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1><span>ACME</span> Wire Transfer Service <span class="lw-badge">&#x1f6e1; Lightwell Protected</span></h1>
+        <div class="status">All Systems Operational</div>
+      </div>
+      <div class="nav">
+        <a href="#" class="active">Dashboard</a>
+        <a href="#">Initiate Transfer</a>
+        <a href="#">Transaction History</a>
+        <a href="#">SWIFT Messages</a>
+        <a href="#">Compliance</a>
+        <a href="#">Settings</a>
+      </div>
+      <div class="container">
+        <div class="stats">
+          <div class="stat-card">
+            <div class="label">Transfers Today</div>
+            <div class="value">1,204</div>
+            <div class="sub">&#9650; 12% vs yesterday</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Total Volume</div>
+            <div class="value">$84.2M</div>
+            <div class="sub">Across 3 networks</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Avg Processing</div>
+            <div class="value">2.4s</div>
+            <div class="sub">p99: 4.1s</div>
+          </div>
+          <div class="stat-card">
+            <div class="label">Compliance Holds</div>
+            <div class="value">7</div>
+            <div class="sub warn">3 pending AML review</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Recent Transfers</h2>
+            <span class="badge">Live</span>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Reference</th>
+                <th>Network</th>
+                <th>Originator</th>
+                <th>Beneficiary</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>WT-2026-0731-8842</td>
+                <td><span class="chip swift">SWIFT</span></td>
+                <td>ACME Corp (US)</td>
+                <td>Müller GmbH (DE)</td>
+                <td class="amount">€ 2,450,000.00</td>
+                <td><span class="chip completed">Completed</span></td>
+                <td>13:42:18</td>
+              </tr>
+              <tr>
+                <td>WT-2026-0731-8841</td>
+                <td><span class="chip fedwire">Fedwire</span></td>
+                <td>First National Bank</td>
+                <td>ACME Treasury</td>
+                <td class="amount">$ 18,750,000.00</td>
+                <td><span class="chip processing">Processing</span></td>
+                <td>13:41:55</td>
+              </tr>
+              <tr>
+                <td>WT-2026-0731-8840</td>
+                <td><span class="chip swift">SWIFT</span></td>
+                <td>ACME Securities</td>
+                <td>Nomura Holdings (JP)</td>
+                <td class="amount">¥ 340,200,000</td>
+                <td><span class="chip completed">Completed</span></td>
+                <td>13:40:02</td>
+              </tr>
+              <tr>
+                <td>WT-2026-0731-8839</td>
+                <td><span class="chip chips">CHIPS</span></td>
+                <td>Global Partners LLC</td>
+                <td>ACME Clearing</td>
+                <td class="amount">$ 5,200,000.00</td>
+                <td><span class="chip completed">Completed</span></td>
+                <td>13:38:44</td>
+              </tr>
+              <tr>
+                <td>WT-2026-0731-8838</td>
+                <td><span class="chip swift">SWIFT</span></td>
+                <td>ACME Capital</td>
+                <td>Barclays PLC (GB)</td>
+                <td class="amount">£ 1,875,000.00</td>
+                <td><span class="chip pending">AML Hold</span></td>
+                <td>13:37:12</td>
+              </tr>
+              <tr>
+                <td>WT-2026-0731-8837</td>
+                <td><span class="chip fedwire">Fedwire</span></td>
+                <td>ACME Payroll</td>
+                <td>ADP Processing</td>
+                <td class="amount">$ 3,420,891.50</td>
+                <td><span class="chip completed">Completed</span></td>
+                <td>13:35:28</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h2>Initiate Wire Transfer</h2>
+          </div>
+          <div class="form-section">
+            <div class="form-group">
+              <label>Originator Account</label>
+              <select><option>ACME Corp — Operating (****4821)</option><option>ACME Corp — Treasury (****7733)</option></select>
+            </div>
+            <div class="form-group">
+              <label>Transfer Network</label>
+              <select><option>SWIFT (International)</option><option>Fedwire (Domestic)</option><option>CHIPS (Interbank)</option></select>
+            </div>
+            <div class="form-group">
+              <label>Beneficiary Name</label>
+              <input type="text" placeholder="Enter beneficiary name">
+            </div>
+            <div class="form-group">
+              <label>Beneficiary SWIFT/BIC</label>
+              <input type="text" placeholder="e.g. BARCGB22">
+            </div>
+            <div class="form-group">
+              <label>Amount</label>
+              <input type="text" placeholder="0.00">
+            </div>
+            <div class="form-group">
+              <label>Currency</label>
+              <select><option>USD</option><option>EUR</option><option>GBP</option><option>JPY</option><option>CHF</option></select>
+            </div>
+            <div class="form-group">
+              <label>Reference / Memo</label>
+              <input type="text" placeholder="Payment reference">
+            </div>
+            <div class="form-group" style="justify-content: flex-end;">
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline">Save Draft</button>
+                <button class="btn btn-primary">Submit for Approval</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        ACME Financial Services — Wire Transfer Service v1.2.0 <span>|</span> Quarkus 3.8.4 on Red Hat OpenShift <span>|</span> Protected by Red Hat Lightwell Network
+      </div>
+    </body>
+    </html>
